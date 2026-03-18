@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKGateway — Enterprise AI Inference Proxy 🛡️</title>
+    <meta name="description" content="SKGateway — BlueCoat for AI. Routes, monitors, audits and secures all AI inference traffic. Part of the SKWorld ecosystem.">
+    <link rel="canonical" href="https://skgateway.skworld.io">
+
+    <meta property="og:title" content="SKGateway — Enterprise AI Inference Proxy">
+    <meta property="og:description" content="BlueCoat for AI. Routes, monitors, audits and secures all AI inference traffic.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://skgateway.skworld.io">
+    <meta property="og:site_name" content="SKGateway">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SKGateway — Enterprise AI Inference Proxy">
+    <meta name="twitter:description" content="BlueCoat for AI. Routes, monitors, audits and secures all AI inference traffic.">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #1b2838 40%, #0a0a0a 100%);
+        }
+
+        .stars {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, rgba(33,150,243,0.9), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(0,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(33,150,243,0.8), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.6), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 100s linear infinite;
+        }
+        .stars:nth-child(2) { background-size: 250px 125px; animation: sparkle 140s linear infinite reverse; opacity: 0.8; }
+        .stars:nth-child(3) { background-size: 300px 150px; animation: sparkle 180s linear infinite; opacity: 0.5; }
+
+        @keyframes sparkle {
+            from { transform: translateX(0) translateY(0); }
+            to { transform: translateX(-200px) translateY(-100px); }
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .nav-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: #2196F3; }
+
+        /* Hero */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+        }
+        .hero-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #2196F3;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2196F3 0%, #00BCD4 50%, #4CAF50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        .hero-tagline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: #00BCD4;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 0 20px rgba(0,188,212,0.4);
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            border: 1px solid;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .badge:hover { transform: translateY(-2px); }
+        .badge-blue { border-color: #2196F3; color: #2196F3; }
+        .badge-cyan { border-color: #00BCD4; color: #00BCD4; }
+        .badge-green { border-color: #4CAF50; color: #4CAF50; }
+
+        .cta-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .cta-primary {
+            display: inline-block;
+            background: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
+            color: white;
+            padding: 0.9rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(33,150,243,0.4);
+        }
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(33,150,243,0.6);
+        }
+        .cta-secondary {
+            display: inline-block;
+            background: transparent;
+            color: #2196F3;
+            padding: 0.9rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+        .cta-secondary:hover {
+            background: rgba(33,150,243,0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: 3rem 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            background: rgba(26, 26, 46, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(33,150,243,0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: #2196F3;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(33,150,243,0.2);
+        }
+        .stat-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2196F3;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 0.3rem;
+        }
+
+        /* Features */
+        .features-section {
+            padding: 4rem 0;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2196F3, #00BCD4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: rgba(26, 26, 46, 0.4);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(33,150,243,0.15);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+        }
+        .feature-card:hover {
+            border-color: rgba(33,150,243,0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(33,150,243,0.15);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+        .feature-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Architecture */
+        .arch-section {
+            padding: 4rem 0;
+        }
+        .arch-diagram {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid rgba(33,150,243,0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #00BCD4;
+            line-height: 1.8;
+            overflow-x: auto;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .arch-diagram .comment { color: rgba(255,255,255,0.4); }
+        .arch-diagram .highlight { color: #2196F3; font-weight: 700; }
+        .arch-diagram .accent { color: #4CAF50; }
+
+        /* Install */
+        .install-section {
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .install-box {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid rgba(33,150,243,0.4);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #4CAF50;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s;
+            max-width: 700px;
+            text-align: left;
+        }
+        .install-box:hover {
+            border-color: #2196F3;
+            box-shadow: 0 0 20px rgba(33,150,243,0.3);
+        }
+        .install-prompt { color: #2196F3; }
+        .install-comment { color: rgba(255,255,255,0.4); }
+
+        /* Docs */
+        .docs-section { padding: 4rem 0; }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            max-width: 900px;
+            margin: 2rem auto 0;
+        }
+        .doc-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid rgba(33,150,243,0.15);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+        .doc-link:hover {
+            border-color: #2196F3;
+            transform: translateX(5px);
+            background: rgba(33,150,243,0.1);
+        }
+        .doc-icon { font-size: 1.5rem; }
+        .doc-name { font-weight: 600; font-size: 0.95rem; }
+        .doc-desc { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+        /* Ecosystem */
+        .ecosystem-section { padding: 4rem 0; }
+        .ecosystem-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .eco-badge {
+            display: inline-block;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 0.7rem 1.3rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .eco-badge:hover {
+            border-color: #FFD700;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255,215,0,0.2);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(33,150,243,0.15);
+            margin-top: 3rem;
+        }
+        .footer-brand {
+            font-family: 'JetBrains Mono', monospace;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+        .footer-links {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .footer-links a {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: #2196F3; }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.3rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: 1fr; }
+            .nav { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield">
+        <div class="stars"></div>
+        <div class="stars"></div>
+        <div class="stars"></div>
+    </div>
+
+    <nav class="nav">
+        <a href="https://skworld.io" class="nav-brand">← SKWorld</a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#docs">Docs</a>
+            <a href="https://github.com/smilinTux/skgateway">GitHub</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-label">Enterprise AI Security</div>
+            <h1 class="hero-title">SKGateway</h1>
+            <p class="hero-subtitle">Enterprise AI Inference Proxy</p>
+            <p class="hero-tagline">BlueCoat for AI — Routes, monitors, audits and secures all AI inference traffic</p>
+
+            <div class="hero-badges">
+                <span class="badge badge-blue">🛡️ Policy Engine</span>
+                <span class="badge badge-cyan">📊 SIEM Integration</span>
+                <span class="badge badge-green">⚡ WebSocket Streaming</span>
+                <span class="badge badge-blue">🔍 Full Audit Trail</span>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="https://github.com/smilinTux/skgateway" class="cta-primary">View on GitHub →</a>
+                <a href="#docs" class="cta-secondary">Read the Docs</a>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">20</span>
+                    <span class="stat-label">Modules</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">12,957</span>
+                    <span class="stat-label">Lines of Code</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">37</span>
+                    <span class="stat-label">Passing Tests</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">5,501</span>
+                    <span class="stat-label">Lines of Docs</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features-section" id="features">
+            <h2 class="section-title">Core Capabilities</h2>
+            <p class="section-subtitle">Everything you need to secure, monitor, and manage AI inference traffic</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🛡️</span>
+                    <h3 class="feature-title">Policy Engine</h3>
+                    <p class="feature-desc">Declarative YAML policies for routing, rate limiting, content filtering, and access control. 12 policy rule types with real-time enforcement.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">SIEM Integration</h3>
+                    <p class="feature-desc">Native CEF event format. Drop-in integration with Splunk, Elastic, and rsyslog. Full audit trail for every AI request and response.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔌</span>
+                    <h3 class="feature-title">Multi-Provider Support</h3>
+                    <p class="feature-desc">Route to OpenAI, Anthropic, Ollama, NVIDIA, and any OpenAI-compatible API. Automatic failover and load balancing across providers.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">WebSocket Streaming</h3>
+                    <p class="feature-desc">Real-time streaming proxy with token-level monitoring. Stream responses to clients while simultaneously auditing every token.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🎨</span>
+                    <h3 class="feature-title">SOC Dashboard</h3>
+                    <p class="feature-desc">Real-time security operations dashboard with soul-aligned color schemes. Monitor traffic, threats, and policy violations at a glance.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔗</span>
+                    <h3 class="feature-title">OpenClaw & Claude Code</h3>
+                    <p class="feature-desc">First-class integration with OpenClaw agent framework and Claude Code. Drop-in proxy for any AI-powered development workflow.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="arch-section" id="architecture">
+            <h2 class="section-title">Architecture</h2>
+            <p class="section-subtitle">How SKGateway sits between your agents and AI providers</p>
+
+            <div class="arch-diagram">
+                <span class="comment">// Traffic flow</span><br><br>
+                <span class="highlight">┌──────────────┐</span>     <span class="highlight">┌──────────────┐</span>     <span class="highlight">┌──────────────┐</span><br>
+                <span class="highlight">│</span>  <span class="accent">OpenClaw</span>    <span class="highlight">│</span>     <span class="highlight">│</span>              <span class="highlight">│</span>     <span class="highlight">│</span>  <span class="accent">OpenAI</span>      <span class="highlight">│</span><br>
+                <span class="highlight">│</span>  <span class="accent">Claude Code</span> <span class="highlight">│</span> ──► <span class="highlight">│</span>  <span class="highlight">SKGateway</span>  <span class="highlight">│</span> ──► <span class="highlight">│</span>  <span class="accent">Anthropic</span>   <span class="highlight">│</span><br>
+                <span class="highlight">│</span>  <span class="accent">Any Client</span>  <span class="highlight">│</span>     <span class="highlight">│</span>              <span class="highlight">│</span>     <span class="highlight">│</span>  <span class="accent">Ollama</span>      <span class="highlight">│</span><br>
+                <span class="highlight">└──────────────┘</span>     <span class="highlight">└──────┬───────┘</span>     <span class="highlight">│</span>  <span class="accent">NVIDIA</span>      <span class="highlight">│</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">│</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">└──────────────┘</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">▼</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">┌──────────────────┐</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">│</span> <span class="accent">Policy</span> · <span class="accent">Audit</span>   <span class="highlight">│</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">│</span> <span class="accent">SIEM</span> · <span class="accent">Dashboard</span> <span class="highlight">│</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">└──────────────────┘</span>
+            </div>
+        </section>
+
+        <!-- Install -->
+        <section class="install-section">
+            <h2 class="section-title">Quick Start</h2>
+            <p class="section-subtitle">Up and running in minutes</p>
+            <div class="install-box">
+                <span class="install-prompt">$</span> git clone https://github.com/smilinTux/skgateway.git<br>
+                <span class="install-prompt">$</span> cd skgateway<br>
+                <span class="install-prompt">$</span> npm install<br>
+                <span class="install-prompt">$</span> cp config/default.yaml config/local.yaml<br>
+                <span class="install-prompt">$</span> npm start<br>
+                <span class="install-comment"># Gateway running on :3100</span>
+            </div>
+        </section>
+
+        <!-- Docs -->
+        <section class="docs-section" id="docs">
+            <h2 class="section-title">Documentation</h2>
+            <p class="section-subtitle">5,501 lines of comprehensive docs — everything from quickstart to SIEM integration</p>
+
+            <div class="docs-grid">
+                <a href="https://github.com/smilinTux/skgateway#readme" class="doc-link">
+                    <span class="doc-icon">📖</span>
+                    <div><div class="doc-name">README</div><div class="doc-desc">Overview & Quick Start</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/API.md" class="doc-link">
+                    <span class="doc-icon">🔌</span>
+                    <div><div class="doc-name">API Reference</div><div class="doc-desc">REST + WebSocket</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/INSTALL.md" class="doc-link">
+                    <span class="doc-icon">⚙️</span>
+                    <div><div class="doc-name">Installation</div><div class="doc-desc">systemd, Docker, manual</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/POLICIES.md" class="doc-link">
+                    <span class="doc-icon">🛡️</span>
+                    <div><div class="doc-name">Policies</div><div class="doc-desc">12 rule types + examples</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/SIEM.md" class="doc-link">
+                    <span class="doc-icon">📊</span>
+                    <div><div class="doc-name">SIEM Integration</div><div class="doc-desc">Splunk, Elastic, CEF</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/CONFIGURATION.md" class="doc-link">
+                    <span class="doc-icon">🔧</span>
+                    <div><div class="doc-name">Configuration</div><div class="doc-desc">Full config reference</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/DEVELOPER.md" class="doc-link">
+                    <span class="doc-icon">💻</span>
+                    <div><div class="doc-name">Developer Guide</div><div class="doc-desc">Module guide & extending</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/DASHBOARD.md" class="doc-link">
+                    <span class="doc-icon">🎨</span>
+                    <div><div class="doc-name">Dashboard</div><div class="doc-desc">SOC panels & soul colors</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/ARCHITECTURE.md" class="doc-link">
+                    <span class="doc-icon">🏗️</span>
+                    <div><div class="doc-name">Architecture</div><div class="doc-desc">High-level design</div></div>
+                </a>
+                <a href="https://github.com/smilinTux/skgateway/blob/main/docs/OPENCLAW.md" class="doc-link">
+                    <span class="doc-icon">🐧</span>
+                    <div><div class="doc-name">OpenClaw</div><div class="doc-desc">Agent integration</div></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Ecosystem -->
+        <section class="ecosystem-section">
+            <h2 class="section-title">Part of the SKWorld Ecosystem</h2>
+            <p class="section-subtitle">Sovereign AI infrastructure — tools creators own and control</p>
+            <div class="ecosystem-grid">
+                <a href="https://skworld.io" class="eco-badge">🌍 SKWorld</a>
+                <a href="https://skcapstone.io" class="eco-badge">🏛️ SKCapstone</a>
+                <a href="https://sksecurity.io" class="eco-badge">🛡️ SKSecurity</a>
+                <a href="https://skmemory.io" class="eco-badge">🧠 SKMemory</a>
+                <a href="https://skcomm.io" class="eco-badge">📡 SKComm</a>
+                <a href="https://skstacks.io" class="eco-badge">⚡ SKStacks</a>
+                <a href="https://skforge.io" class="eco-badge">⚒️ SKForge</a>
+                <a href="https://capauth.io" class="eco-badge">🔐 CapAuth</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-brand">SKGateway — Built by <a href="https://skworld.io" style="color:#2196F3;text-decoration:none;">smilinTux</a> · Part of the <a href="https://skworld.io" style="color:#FFD700;text-decoration:none;">SKWorld</a> ecosystem 🐧</p>
+            <div class="footer-links">
+                <a href="https://github.com/smilinTux/skgateway">GitHub</a>
+                <a href="https://skworld.io">SKWorld</a>
+                <a href="https://lumina.skworld.io">Lumina</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
