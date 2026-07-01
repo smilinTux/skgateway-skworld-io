@@ -1,0 +1,49 @@
+{
+  "repo": "smilinTux/skgateway",
+  "branch": "main",
+  "path": "docs",
+  "generated": "2026-06-30",
+  "note": "Committed fallback for the /docs viewer when the GitHub Contents API is unavailable or rate-limited. Regenerate from: python docs-manifest-gen.py smilinTux/skgateway --out docs-manifest.json",
+  "docs": [
+    {
+      "name": "API.md",
+      "title": "SKGateway — REST API Reference"
+    },
+    {
+      "name": "ARCHITECTURE.md",
+      "title": "SKGateway — Architecture"
+    },
+    {
+      "name": "CLAUDE-CODE.md",
+      "title": "SKGateway — Claude Code Integration Guide"
+    },
+    {
+      "name": "CONFIGURATION.md",
+      "title": "SKGateway — Configuration Reference"
+    },
+    {
+      "name": "DASHBOARD.md",
+      "title": "SKGateway — Dashboard User Guide"
+    },
+    {
+      "name": "DEVELOPER.md",
+      "title": "SKGateway — Developer Guide"
+    },
+    {
+      "name": "INSTALL.md",
+      "title": "SKGateway — Installation Guide"
+    },
+    {
+      "name": "OPENCLAW.md",
+      "title": "SKGateway — OpenClaw Integration Guide"
+    },
+    {
+      "name": "POLICIES.md",
+      "title": "SKGateway — Policy Writing Guide"
+    },
+    {
+      "name": "SIEM.md",
+      "title": "SKGateway — SIEM Integration Guide"
+    }
+  ]
+}
