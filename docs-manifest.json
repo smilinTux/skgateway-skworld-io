@@ -2,7 +2,7 @@
   "repo": "smilinTux/skgateway",
   "branch": "main",
   "path": "docs",
-  "generated": "2026-08-29",
+  "generated": "2026-08-30",
   "note": "Committed fallback for the /docs viewer when the GitHub Contents API is unavailable or rate-limited. Regenerate from: python docs-manifest-gen.py smilinTux/skgateway --out docs-manifest.json",
   "docs": [
     {
@@ -44,6 +44,10 @@
     {
       "name": "POLICIES.md",
       "title": "SKGateway — Policy Writing Guide"
+    },
+    {
+      "name": "PUBLIC-SURFACE.md",
+      "title": "Public documentation surface"
     },
     {
       "name": "RUNBOOK.md",
