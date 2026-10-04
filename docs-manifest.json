@@ -2,7 +2,7 @@
   "repo": "smilinTux/skgateway",
   "branch": "main",
   "path": "docs",
-  "generated": "2026-10-03",
+  "generated": "2026-10-04",
   "note": "Committed fallback for the /docs viewer when the GitHub Contents API is unavailable or rate-limited. Regenerate from: python docs-manifest-gen.py smilinTux/skgateway --out docs-manifest.json",
   "docs": [
     {
@@ -38,6 +38,10 @@
       "title": "SKGateway — Developer Guide"
     },
     {
+      "name": "DOCS-DISPOSITION.md",
+      "title": "Internal documentation artifact disposition"
+    },
+    {
       "name": "INSTALL.md",
       "title": "SKGateway Installation Guide"
     },
@@ -47,7 +51,7 @@
     },
     {
       "name": "POLICIES.md",
-      "title": "SKGateway — Policy Writing Guide"
+      "title": "SKGateway - Policy Writing Guide"
     },
     {
       "name": "PUBLIC-SURFACE.md",
@@ -60,6 +64,14 @@
     {
       "name": "SIEM.md",
       "title": "SKGateway — SIEM Integration Guide"
+    },
+    {
+      "name": "runtime-bundle-architecture.md",
+      "title": "SKGateway Immutable Runtime Bundle Architecture"
+    },
+    {
+      "name": "service-discovery.md",
+      "title": "Shared service discovery"
     }
   ]
 }
