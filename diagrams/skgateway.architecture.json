@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "SKGateway Component Map",
+    "subtitle": "Single Node.js proxy process: identity, policy, classification, routing, and SIEM audit on the request path",
+    "output": "skgateway.architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "client", "type": "frontend", "label": "Client", "sublabel": "OpenClaw, Claude Code, OpenAI-compatible callers", "pos": [20, 300], "size": [250, 76] },
+    { "id": "core", "type": "backend", "label": "Proxy Core", "sublabel": "core.mjs handleRequest() pipeline, :18780", "pos": [360, 300], "size": [230, 76] },
+    { "id": "identity", "type": "security", "label": "Identity", "sublabel": "identity/* (CapAuth, session)", "pos": [360, 60], "size": [220, 64] },
+    { "id": "policy", "type": "security", "label": "Policy Engine", "sublabel": "policy/* (rules + rate limit)", "pos": [660, 60], "size": [220, 64] },
+    { "id": "classifier", "type": "backend", "label": "Risk Classifier", "sublabel": "classifiers/classifier.mjs, flag-not-block", "pos": [360, 520], "size": [230, 70] },
+    { "id": "router", "type": "backend", "label": "Router + Pool", "sublabel": "router.mjs registry, retry/failover", "pos": [660, 300], "size": [230, 76] },
+    { "id": "siem", "type": "messagebus", "label": "SIEM Event Bus", "sublabel": "siem/events.mjs, CEF format", "pos": [660, 520], "size": [220, 70] },
+    { "id": "metrics", "type": "database", "label": "Metrics Store", "sublabel": "data/metrics.db (better-sqlite3)", "pos": [960, 520], "size": [220, 70], "tag": "local" },
+    { "id": "dashboard", "type": "frontend", "label": "SOC Dashboard", "sublabel": "dashboard/server.mjs, HTTP + WS :18781", "pos": [960, 80], "size": [220, 64] },
+    { "id": "providers", "type": "external", "label": "AI Providers", "sublabel": "OpenAI, Anthropic, Ollama, NVIDIA, OpenAI-compatible APIs", "pos": [1240, 300], "size": [250, 76] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "SKGateway process (single Node.js process, no external DB/broker)", "wraps": ["core", "identity", "policy", "classifier", "router", "siem", "metrics", "dashboard"] }
+  ],
+  "connections": [
+    { "id": "client-to-core", "from": "client", "to": "core", "label": "POST /v1/chat/completions", "variant": "default" },
+    { "id": "core-to-identity", "from": "core", "to": "identity", "label": "identify (CapAuth)", "variant": "security" },
+    { "id": "core-to-policy", "from": "core", "to": "policy", "label": "policy check + rate limit", "variant": "security" },
+    { "id": "core-to-classifier", "from": "core", "to": "classifier", "label": "risk classification", "variant": "dashed" },
+    { "id": "core-to-router", "from": "core", "to": "router", "label": "route to healthy backend", "variant": "default" },
+    { "id": "router-to-providers", "from": "router", "to": "providers", "label": "upstream relay, retry/failover", "variant": "default" },
+    { "id": "core-to-siem", "from": "core", "to": "siem", "label": "emit CEF audit event", "variant": "security" },
+    { "id": "siem-to-metrics", "from": "siem", "to": "metrics", "label": "persist metrics", "variant": "dashed" },
+    { "id": "dashboard-to-metrics", "from": "dashboard", "to": "metrics", "label": "read", "variant": "dashed" },
+    { "id": "dashboard-to-siem", "from": "dashboard", "to": "siem", "label": "read", "variant": "dashed" }
+  ]
+}
